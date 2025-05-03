@@ -19,7 +19,7 @@ public class CaoPhoService {
     private final GridFSBucket gridFSBucket;
     private final CaoPhoRepository caoPhoRepo;
 
-    public void saveCaoPho(String title, MultipartFile pdf, MultipartFile image) throws IOException {
+    public void saveCaoPho(String title, String birth, String death, MultipartFile pdf, MultipartFile image) throws IOException {
         ObjectId pdfId = gridFSBucket.uploadFromStream(
                 title + ".pdf",
                 pdf.getInputStream(),
@@ -34,6 +34,8 @@ public class CaoPhoService {
 
         CaoPho entry = CaoPho.builder()
                 .title(title)
+                .birth(birth)
+                .death(death)
                 .pdfId(pdfId.toHexString())
                 .imageId(imageId.toHexString())
                 .build();

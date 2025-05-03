@@ -37,11 +37,13 @@ public class CaoPhoController {
     @PostMapping("/saveEntry")
     public ResponseEntity<String> entry(
             @RequestParam("title") String title,
+            @RequestParam("birth") String birth,
+            @RequestParam("death") String death,
             @RequestParam("pdf") MultipartFile pdfFile,
             @RequestParam("image") MultipartFile imageFile) {
 
         try {
-            caoPhoService.saveCaoPho(title, pdfFile, imageFile);
+            caoPhoService.saveCaoPho(title, birth, death, pdfFile, imageFile);
             return ResponseEntity.ok("Files uploaded successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
@@ -56,6 +58,8 @@ public class CaoPhoController {
     @PutMapping("/entry/{id}")
     public ResponseEntity<String> editEntry(@PathVariable String id,
                                             @RequestParam("title") String title,
+                                            @RequestParam("birth") String birth,
+                                            @RequestParam("death") String death,
                                             @RequestParam(value = "pdf", required = false) MultipartFile pdfFile,
                                             @RequestParam(value = "image", required = false) MultipartFile imageFile) {
         try {
@@ -67,6 +71,12 @@ public class CaoPhoController {
             CaoPho caoPho = optionalCaoPho.get();
             boolean titleChanged = !title.equals(caoPho.getTitle());
             caoPho.setTitle(title);
+
+            boolean birthChanged = !birth.equals(caoPho.getBirth());
+            caoPho.setBirth(birth);
+
+            boolean deathChanged = !birth.equals(caoPho.getDeath());
+            caoPho.setDeath(death);
 
             if (pdfFile != null && !pdfFile.isEmpty()) {
                 gridFSBucket.delete(new ObjectId(caoPho.getPdfId()));

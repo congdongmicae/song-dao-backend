@@ -12,6 +12,8 @@ public class CaoPho {
     private String id;
 
     private String title;
+    private String birth;
+    private String death;
     private String pdfId;
     private String imageId;
 }
