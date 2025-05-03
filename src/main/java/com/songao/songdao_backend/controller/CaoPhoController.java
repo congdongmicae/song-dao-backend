@@ -4,7 +4,6 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.songao.songdao_backend.model.CaoPho;
-import com.songao.songdao_backend.model.ThuMoi;
 import com.songao.songdao_backend.repository.CaoPhoRepository;
 import com.songao.songdao_backend.service.CaoPhoService;
 import org.bson.Document;
@@ -65,17 +64,13 @@ public class CaoPhoController {
         try {
             Optional<CaoPho> optionalCaoPho = caoPhoRepo.findById(id);
             if (optionalCaoPho.isEmpty()) {
-                return ResponseEntity.status(404).body("Thu Moi not found");
+                return ResponseEntity.status(404).body("Cao Pho not found");
             }
 
             CaoPho caoPho = optionalCaoPho.get();
             boolean titleChanged = !title.equals(caoPho.getTitle());
             caoPho.setTitle(title);
-
-            boolean birthChanged = !birth.equals(caoPho.getBirth());
             caoPho.setBirth(birth);
-
-            boolean deathChanged = !birth.equals(caoPho.getDeath());
             caoPho.setDeath(death);
 
             if (pdfFile != null && !pdfFile.isEmpty()) {
@@ -135,7 +130,7 @@ public class CaoPhoController {
             }
 
             caoPhoRepo.save(caoPho);
-            return ResponseEntity.ok("Thu Moi was updated successfully");
+            return ResponseEntity.ok("Cao Pho was updated successfully");
 
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error (Update Thu Moi): " + e.getMessage());
@@ -147,14 +142,14 @@ public class CaoPhoController {
         try {
             Optional<CaoPho> optionalCaoPho = caoPhoRepo.findById(id);
             if (optionalCaoPho.isEmpty()) {
-                return ResponseEntity.status(404).body("Thu Moi not found");
+                return ResponseEntity.status(404).body("cao Pho not found");
             }
 
             CaoPho caoPho = optionalCaoPho.get();
             gridFSBucket.delete(new ObjectId(caoPho.getPdfId()));
             gridFSBucket.delete(new ObjectId(caoPho.getImageId()));
             caoPhoRepo.deleteById(id);
-            return ResponseEntity.ok("Thu Moi entry was deleted successfully");
+            return ResponseEntity.ok("Cao Pho entry was deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error (Delete Entry): " + e.getMessage());
         }
