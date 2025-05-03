@@ -3,9 +3,10 @@ package com.songao.songdao_backend.controller;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
+import com.songao.songdao_backend.model.CaoPho;
 import com.songao.songdao_backend.model.ThuMoi;
-import com.songao.songdao_backend.repository.ThuMoiRepository;
-import com.songao.songdao_backend.service.ThuMoiService;
+import com.songao.songdao_backend.repository.CaoPhoRepository;
+import com.songao.songdao_backend.service.CaoPhoService;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,13 @@ import org.apache.commons.io.IOUtils;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-@RequestMapping("/thumoi")
-public class ThuMoiController {
+@RequestMapping("/caopho")
+public class CaoPhoController {
     @Autowired
-    private ThuMoiService thuMoiService;
+    private CaoPhoService caoPhoService;
 
     @Autowired
-    private ThuMoiRepository thuMoiRepo;
+    private CaoPhoRepository caoPhoRepo;
 
     @Autowired
     private GridFSBucket gridFSBucket;
@@ -40,7 +41,7 @@ public class ThuMoiController {
             @RequestParam("image") MultipartFile imageFile) {
 
         try {
-            thuMoiService.saveThuMoi(title, pdfFile, imageFile);
+            caoPhoService.saveCaoPho(title, pdfFile, imageFile);
             return ResponseEntity.ok("Files uploaded successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
@@ -48,8 +49,8 @@ public class ThuMoiController {
     }
 
     @GetMapping("/entry")
-    public List<ThuMoi> getEntries() {
-        return thuMoiRepo.findAll();
+    public List<CaoPho> getEntries() {
+        return caoPhoRepo.findAll();
     }
 
     @PutMapping("/entry/{id}")
@@ -58,17 +59,17 @@ public class ThuMoiController {
                                             @RequestParam(value = "pdf", required = false) MultipartFile pdfFile,
                                             @RequestParam(value = "image", required = false) MultipartFile imageFile) {
         try {
-            Optional<ThuMoi> optionalThuMoi = thuMoiRepo.findById(id);
-            if (optionalThuMoi.isEmpty()) {
+            Optional<CaoPho> optionalCaoPho = caoPhoRepo.findById(id);
+            if (optionalCaoPho.isEmpty()) {
                 return ResponseEntity.status(404).body("Thu Moi not found");
             }
 
-            ThuMoi thuMoi = optionalThuMoi.get();
-            boolean titleChanged = !title.equals(thuMoi.getTitle());
-            thuMoi.setTitle(title);
+            CaoPho caoPho = optionalCaoPho.get();
+            boolean titleChanged = !title.equals(caoPho.getTitle());
+            caoPho.setTitle(title);
 
             if (pdfFile != null && !pdfFile.isEmpty()) {
-                gridFSBucket.delete(new ObjectId(thuMoi.getPdfId()));
+                gridFSBucket.delete(new ObjectId(caoPho.getPdfId()));
                 ObjectId newPdfId = gridFSBucket.uploadFromStream(
                         sanitizeFileName(title, ".pdf"),
                         pdfFile.getInputStream(),
@@ -76,14 +77,14 @@ public class ThuMoiController {
                                 new Document("type", pdfFile.getContentType()).append("title", title)
                         )
                 );
-                thuMoi.setPdfId(newPdfId.toHexString());
+                caoPho.setPdfId(newPdfId.toHexString());
 
             } else if (titleChanged) {
-                GridFSDownloadStream oldStream = gridFSBucket.openDownloadStream(new ObjectId(thuMoi.getPdfId()));
+                GridFSDownloadStream oldStream = gridFSBucket.openDownloadStream(new ObjectId(caoPho.getPdfId()));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 IOUtils.copy(oldStream, baos);
                 oldStream.close();
-                gridFSBucket.delete(new ObjectId(thuMoi.getPdfId()));
+                gridFSBucket.delete(new ObjectId(caoPho.getPdfId()));
 
                 ObjectId newPdfId = gridFSBucket.uploadFromStream(
                         sanitizeFileName(title, ".pdf"),
@@ -92,11 +93,11 @@ public class ThuMoiController {
                                 new Document("type", "application/pdf").append("title", title)
                         )
                 );
-                thuMoi.setPdfId(newPdfId.toHexString());
+                caoPho.setPdfId(newPdfId.toHexString());
             }
 
             if (imageFile != null && !imageFile.isEmpty()) {
-                gridFSBucket.delete(new ObjectId(thuMoi.getImageId()));
+                gridFSBucket.delete(new ObjectId(caoPho.getImageId()));
                 ObjectId newImageId = gridFSBucket.uploadFromStream(
                         sanitizeFileName(title, ".jpg"),
                         imageFile.getInputStream(),
@@ -104,14 +105,14 @@ public class ThuMoiController {
                                 new Document("type", imageFile.getContentType()).append("title", title)
                         )
                 );
-                thuMoi.setImageId(newImageId.toHexString());
+                caoPho.setImageId(newImageId.toHexString());
 
             } else if (titleChanged) {
-                GridFSDownloadStream oldStream = gridFSBucket.openDownloadStream(new ObjectId(thuMoi.getImageId()));
+                GridFSDownloadStream oldStream = gridFSBucket.openDownloadStream(new ObjectId(caoPho.getImageId()));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 IOUtils.copy(oldStream, baos);
                 oldStream.close();
-                gridFSBucket.delete(new ObjectId(thuMoi.getImageId()));
+                gridFSBucket.delete(new ObjectId(caoPho.getImageId()));
 
                 ObjectId newImageId = gridFSBucket.uploadFromStream(
                         sanitizeFileName(title, ".jpg"),
@@ -120,10 +121,10 @@ public class ThuMoiController {
                                 new Document("type", "image/jpeg").append("title", title)
                         )
                 );
-                thuMoi.setImageId(newImageId.toHexString());
+                caoPho.setImageId(newImageId.toHexString());
             }
 
-            thuMoiRepo.save(thuMoi);
+            caoPhoRepo.save(caoPho);
             return ResponseEntity.ok("Thu Moi was updated successfully");
 
         } catch (Exception e) {
@@ -134,15 +135,15 @@ public class ThuMoiController {
     @DeleteMapping("/entry/{id}")
     public ResponseEntity<String> deleteEntry(@PathVariable String id) {
         try {
-            Optional<ThuMoi> optionalThuMoi = thuMoiRepo.findById(id);
-            if (optionalThuMoi.isEmpty()) {
+            Optional<CaoPho> optionalCaoPho = caoPhoRepo.findById(id);
+            if (optionalCaoPho.isEmpty()) {
                 return ResponseEntity.status(404).body("Thu Moi not found");
             }
 
-            ThuMoi thuMoi = optionalThuMoi.get();
-            gridFSBucket.delete(new ObjectId(thuMoi.getPdfId()));
-            gridFSBucket.delete(new ObjectId(thuMoi.getImageId()));
-            thuMoiRepo.deleteById(id);
+            CaoPho caoPho = optionalCaoPho.get();
+            gridFSBucket.delete(new ObjectId(caoPho.getPdfId()));
+            gridFSBucket.delete(new ObjectId(caoPho.getImageId()));
+            caoPhoRepo.deleteById(id);
             return ResponseEntity.ok("Thu Moi entry was deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error (Delete Entry): " + e.getMessage());
