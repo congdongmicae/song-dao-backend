@@ -12,8 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableMongoRepositories(basePackages = "com.songao.songdao_backend")
 public class SongdaoBackendApplication {
 
-	//disable default security password
-
 	public static void main(String[] args) {
 		SpringApplication.run(SongdaoBackendApplication.class, args);
 	}

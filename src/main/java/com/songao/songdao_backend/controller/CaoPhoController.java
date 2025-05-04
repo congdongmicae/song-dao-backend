@@ -133,7 +133,7 @@ public class CaoPhoController {
             return ResponseEntity.ok("Cao Pho was updated successfully");
 
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error (Update Thu Moi): " + e.getMessage());
+            return ResponseEntity.status(500).body("Error (Update Cao Pho): " + e.getMessage());
         }
     }
 
@@ -142,7 +142,7 @@ public class CaoPhoController {
         try {
             Optional<CaoPho> optionalCaoPho = caoPhoRepo.findById(id);
             if (optionalCaoPho.isEmpty()) {
-                return ResponseEntity.status(404).body("cao Pho not found");
+                return ResponseEntity.status(404).body("Cao Pho not found");
             }
 
             CaoPho caoPho = optionalCaoPho.get();
