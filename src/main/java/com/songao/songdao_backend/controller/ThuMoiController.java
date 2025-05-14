@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "https://song-dao-frontend.vercel.app"})
 @RequestMapping("/thumoi")
 public class ThuMoiController {
     @Autowired
