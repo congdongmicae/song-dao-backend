@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/files")
-@CrossOrigin(origins = {"http://localhost:5173", "https://songdao.de"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://songdao.de", "https://www.songdao.de"})
 public class FileController {
 
     private final GridFSBucket gridFSBucket;

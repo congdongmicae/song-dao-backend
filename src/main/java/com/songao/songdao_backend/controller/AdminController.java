@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 //@CrossOrigin(origins = "*")
-@CrossOrigin(origins = {"http://localhost:5173", "https://songdao.de"}, allowCredentials =  "true")
+@CrossOrigin(origins = {"http://localhost:5173", "https://songdao.de", "https://www.songdao.de"}, allowCredentials =  "true")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {

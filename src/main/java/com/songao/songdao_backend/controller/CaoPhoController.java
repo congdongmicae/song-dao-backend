@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "https://songdao.de"})
+@CrossOrigin(origins = {"http://localhost:5173", "https://songdao.de, https://www.songdao.de"})
 @RequestMapping("/caopho")
 public class CaoPhoController {
     @Autowired
